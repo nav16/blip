@@ -7,8 +7,13 @@ module Blip
     end
 
     def process
-      data = client.readpartial(1024)
-      puts data
+      request = Request.new
+      until readable?
+        data = client.readpartial(1024)
+        request.parser << data
+
+        break if request.parsed
+      end
 
       respond
     end
@@ -25,6 +30,10 @@ module Blip
 
     def close
       client.close
+    end
+
+    def readable?
+      client.closed? || client.eof?
     end
   end
 end
