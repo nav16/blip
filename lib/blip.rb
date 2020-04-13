@@ -3,6 +3,8 @@ require "blip/server"
 require "blip/connection"
 require "blip/request"
 require "blip/headers"
+require "blip/builder"
+require "blip/response"
 
 module Blip
   CHUNK_SIZE = 16 * 1024
@@ -11,4 +13,6 @@ module Blip
   # Your code goes here...
 end
 
-Blip::Server.new.run
+app = Blip::Builder.parse_file("app/config.ru")
+
+Blip::Server.new(3001, app).run

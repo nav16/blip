@@ -1,3 +1,5 @@
+require "stringio"
+
 module Blip
   class Headers
     attr_accessor :env
@@ -16,6 +18,7 @@ module Blip
       env["REQUEST_PATH"]   = @parser.request_url
       env["PATH_INFO"]      = @parser.request_url
       env["REQUEST_METHOD"] = @parser.http_method
+      env["rack.input"] = StringIO.new
     end
   end
 end
