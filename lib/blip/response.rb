@@ -4,12 +4,7 @@ module Blip
     attr_accessor :status
     attr_reader :body, :headers
 
-    REASONS = {
-      200 => "OK",
-      404 => "Not Found"
-    }.freeze
-
-    HEADER_FORMAT  = "%s: %s\r\n".freeze
+    HEADER_FORMAT = "%s: %s\r\n".freeze
 
     def initialize
       @headers = {}
@@ -24,7 +19,7 @@ module Blip
     end
 
     def head
-      reason = REASONS[status]
+      reason = HTTP_STATUS_CODES[status]
       "HTTP/1.1 #{@status} #{reason}\r\n#{headers_output}"
     end
 
