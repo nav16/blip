@@ -16,4 +16,4 @@ end
 
 app = Blip::Builder.parse_file("app/config.ru")
 
-Blip::Server.new(3001, app).run
+Blip::Server.new(3001, app).start 2

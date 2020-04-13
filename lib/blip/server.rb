@@ -7,6 +7,16 @@ module Blip
       @app = app
     end
 
+    def start(workers = 1)
+      workers.times do
+        fork do
+          puts "Forked #{Process.pid}"
+          run
+        end
+      end
+      Process.waitall
+    end
+
     def run
       loop do
         client = @socket.accept
