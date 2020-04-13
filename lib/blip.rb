@@ -2,6 +2,7 @@ require "blip/version"
 require "blip/server"
 require "blip/connection"
 require "blip/request"
+require "blip/headers"
 
 module Blip
   CHUNK_SIZE = 16 * 1024

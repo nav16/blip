@@ -4,16 +4,18 @@ module Blip
 
     def initialize(client)
       @client = client
+      @env = {}
+      @request = Request.new(@env)
     end
 
     def process
-      request = Request.new
       until readable?
         data = client.readpartial(1024)
-        request.parser << data
+        @request.parser << data
 
-        break if request.parsed
+        break if @request.parsed
       end
+      @request.parse!
 
       respond
     end

@@ -1,10 +1,13 @@
 require "http/parser"
 
 module Blip
-  class Request
-    attr_accessor :parser, :parsed
+  class InvalidRequest < StandardError; end
 
-    def initialize
+  class Request
+    attr_accessor :parser, :parsed, :env
+
+    def initialize(env)
+      @env = env
       @parser = Http::Parser.new(self)
       @parsed = false
     end
@@ -14,13 +17,25 @@ module Blip
       puts "  " + parser.headers.inspect
       puts
 
+      @verb = parser.http_method.upcase
+      @path = parser.request_url
       parsed!
+    end
+
+    def parse!
+      headers!
     end
 
     private
 
     def parsed!
       @parsed = true
+    end
+
+    def headers!
+      headers = Headers.new(parser, env)
+      @headers = headers.parse!
+      env = headers.env
     end
   end
 end
