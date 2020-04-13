@@ -1,5 +1,3 @@
-require "stringio"
-
 module Blip
   class Headers
     attr_accessor :env

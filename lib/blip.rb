@@ -1,17 +1,21 @@
+require "socket"
+require "http/parser"
+require "stringio"
+
 require "blip/version"
-require "blip/server"
-require "blip/connection"
-require "blip/request"
-require "blip/headers"
 require "blip/builder"
-require "blip/response"
 require "blip/http_status"
 
 module Blip
   CHUNK_SIZE = 16 * 1024
 
   class Error < StandardError; end
-  # Your code goes here...
+
+  autoload :Connection,         "blip/connection"
+  autoload :Headers,            "blip/headers"
+  autoload :Request,            "blip/request"
+  autoload :Response,           "blip/response"
+  autoload :Server,             "blip/server"
 end
 
 app = Blip::Builder.parse_file("app/config.ru")

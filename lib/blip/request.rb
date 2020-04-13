@@ -1,5 +1,3 @@
-require "http/parser"
-
 module Blip
   class InvalidRequest < StandardError; end
 

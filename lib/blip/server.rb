@@ -1,5 +1,3 @@
-require "socket"
-
 module Blip
   class Server
     def initialize(port, app)
