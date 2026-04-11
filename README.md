@@ -57,6 +57,44 @@ app = Blip::Builder.parse_file("app/config.ru")
 Blip::Server.new(3001, app).start(4) # 4 workers
 ```
 
+## Architecture
+
+```
+           ┌──────────────┐
+           │   Parent     │  opens TCP socket, forks workers,
+           │  (Server)    │  forwards INT/TERM/QUIT to children
+           └──────┬───────┘
+                  │ fork × WORKERS
+      ┌───────────┼───────────┐
+      ▼           ▼           ▼
+  ┌───────┐   ┌───────┐   ┌───────┐
+  │Worker │   │Worker │   │Worker │   each accept()s on the shared socket
+  └───┬───┘   └───────┘   └───────┘
+      │ one connection at a time
+      ▼
+  ┌────────────┐   bytes    ┌──────────────┐
+  │ Connection ├──────────▶ │ http_parser  │
+  └─────┬──────┘            └──────┬───────┘
+        │                          │ callbacks
+        │          ┌───────────────┘
+        ▼          ▼
+  ┌─────────────────────┐      ┌──────────┐
+  │ Request → Rack env  ├────▶ │ Rack app │
+  └─────────┬───────────┘      └────┬─────┘
+            │                       │ [status, headers, body]
+            ▼                       ▼
+        ┌──────────────────────────────┐
+        │ Response (writes + closes)   │
+        └──────────────────────────────┘
+```
+
+The pieces map directly onto files in `lib/blip/`: `server.rb` owns the
+parent/worker lifecycle, `connection.rb` drives one client socket through
+`http_parser.rb`, `request.rb` assembles the Rack `env` (headers via
+`headers.rb`), and `response.rb` serialises the app's return value back to the
+wire. There is no reactor or thread pool — concurrency comes purely from having
+multiple forked workers, each handling one connection at a time.
+
 ## How it works
 
 - The parent process opens a listening socket and `fork`s `WORKERS` children.
