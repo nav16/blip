@@ -14,7 +14,7 @@ module Blip
 
     def headers_output
       @headers["Content-Length"] = @body.size
-      @headers["Connection"] = "Close"
+      @headers["Connection"] = "close"
       headers_str
     end
 
