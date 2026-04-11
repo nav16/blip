@@ -31,9 +31,7 @@ module Blip
     end
 
     def headers!
-      headers = Headers.new(parser, env)
-      @headers = headers.parse!
-      env = headers.env
+      Headers.new(parser, env).parse!
     end
   end
 end
