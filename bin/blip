@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
+require "blip"
+
+port    = (ENV["PORT"] || 3001).to_i
+workers = (ENV["WORKERS"] || 2).to_i
+config  = ARGV[0] || "app/config.ru"
+
+app = Blip::Builder.parse_file(config)
+Blip::Server.new(port, app).start(workers)
