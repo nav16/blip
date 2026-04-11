@@ -10,11 +10,9 @@ module Blip
     end
 
     def process
-      until readable?
+      until @request.parsed
         data = @client.readpartial(CHUNK_SIZE)
         @request.parser << data
-
-        break if @request.parsed
       end
       @request.parse!
       @env = @request.env
@@ -42,10 +40,6 @@ module Blip
 
     def close
       @client.close
-    end
-
-    def readable?
-      @client.closed? || @client.eof?
     end
   end
 end
