@@ -8,13 +8,14 @@ module Blip
       @env = env
       @parser = Http::Parser.new(self)
       @parsed = false
+      @body = StringIO.new.tap { |io| io.set_encoding("ASCII-8BIT") }
+    end
+
+    def on_body(chunk)
+      @body << chunk
     end
 
     def on_message_complete
-      puts "#{parser.http_method} #{parser.request_url}"
-      puts "  " + parser.headers.inspect
-      puts
-
       @verb = parser.http_method.upcase
       @path = parser.request_url
       parsed!
@@ -22,6 +23,8 @@ module Blip
 
     def parse!
       headers!
+      @body.rewind
+      @env["rack.input"] = @body
     end
 
     private

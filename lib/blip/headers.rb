@@ -27,7 +27,6 @@ module Blip
 
       env["rack.version"]      = [1, 3]
       env["rack.url_scheme"]   = "http"
-      env["rack.input"]        = StringIO.new("").tap { |io| io.set_encoding("ASCII-8BIT") }
       env["rack.errors"]       = $stderr
       env["rack.multithread"]  = false
       env["rack.multiprocess"] = true
